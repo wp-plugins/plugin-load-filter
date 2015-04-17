@@ -1,0 +1,205 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plf\n"
+"POT-Creation-Date: 2015-04-14 17:51+0900\n"
+"PO-Revision-Date: 2015-04-14 17:52+0900\n"
+"Last-Translator: Yasunari Enomoto <enomoto@celtislab.net>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#. Description of the plugin/theme
+msgid "Dynamically activate the selected plugins for each page. Response will be faster by filtering plugins."
+msgstr ""
+
+#: ../plugin-load-filter.php:145
+msgid "Plugin Load Filter"
+msgstr ""
+
+#: ../plugin-load-filter.php:366
+msgid "Page Filter is not registered"
+msgstr ""
+
+#: ../plugin-load-filter.php:420
+msgid "Type"
+msgstr ""
+
+#: ../plugin-load-filter.php:420
+msgid "Plugins"
+msgstr ""
+
+#: ../plugin-load-filter.php:441
+msgid "Edit"
+msgstr ""
+
+#: ../plugin-load-filter.php:442
+msgid "Delete"
+msgstr ""
+
+#: ../plugin-load-filter.php:456
+msgid "Plugin Load Filter Settings"
+msgstr ""
+
+#: ../plugin-load-filter.php:460
+msgid "Filter Registration"
+msgstr ""
+
+#: ../plugin-load-filter.php:461
+msgid "Page Filter Activation"
+msgstr ""
+
+#: ../plugin-load-filter.php:485
+msgid "Register the plugins to be used only in admin mode."
+msgstr ""
+
+#: ../plugin-load-filter.php:488
+msgid ""
+"Register the plugins to be used only in desktop/moble device. (wp_is_mobile "
+"function use)"
+msgstr ""
+
+#: ../plugin-load-filter.php:491
+msgid ""
+"Register the plugins for selecting whether to activate each Page type or "
+"Post."
+msgstr ""
+
+#: ../plugin-load-filter.php:492
+msgid ""
+"Page Filter registration plugins are once blocked, but is activated by "
+"\"Page filter Activation\" setting."
+msgstr ""
+
+#: ../plugin-load-filter.php:494
+msgid ""
+"<strong>[Note]</strong> Running condition is unknown plugin, please do not "
+"register. Unregistered plugins are usually loaded."
+msgstr ""
+
+#: ../plugin-load-filter.php:498
+msgid "Filter Type"
+msgstr ""
+
+#: ../plugin-load-filter.php:500
+msgid "Admin"
+msgstr ""
+
+#: ../plugin-load-filter.php:501
+msgid "Desktop"
+msgstr ""
+
+#: ../plugin-load-filter.php:502
+msgid "Mobile"
+msgstr ""
+
+#: ../plugin-load-filter.php:503
+msgid "Page Filter"
+msgstr ""
+
+#: ../plugin-load-filter.php:513 ../plugin-load-filter.php:575
+msgid "Clear"
+msgstr ""
+
+#: ../plugin-load-filter.php:514 ../plugin-load-filter.php:576
+msgid "Entry &raquo;"
+msgstr ""
+
+#: ../plugin-load-filter.php:534
+msgid ""
+"Select the plugin from \"Page Filter\" registration to activate in each Page "
+"type."
+msgstr ""
+
+#: ../plugin-load-filter.php:535
+msgid "Can be selected plugins to activate from Post content editing screen."
+msgstr ""
+
+#: ../plugin-load-filter.php:540
+msgid "Page type"
+msgstr ""
+
+#: ../plugin-load-filter.php:542
+msgid "Home/Front-page"
+msgstr ""
+
+#: ../plugin-load-filter.php:543
+msgid "Archive page"
+msgstr ""
+
+#: ../plugin-load-filter.php:544
+msgid "Search page"
+msgstr ""
+
+#: ../plugin-load-filter.php:545
+msgid "Attachment page"
+msgstr ""
+
+#: ../plugin-load-filter.php:546
+msgid "Page"
+msgstr ""
+
+#: ../plugin-load-filter.php:547
+msgid "Post : Standard"
+msgstr ""
+
+#: ../plugin-load-filter.php:548
+msgid "Post : Aside"
+msgstr ""
+
+#: ../plugin-load-filter.php:549
+msgid "Post : Image"
+msgstr ""
+
+#: ../plugin-load-filter.php:550
+msgid "Post : Video"
+msgstr ""
+
+#: ../plugin-load-filter.php:551
+msgid "Post : Quote"
+msgstr ""
+
+#: ../plugin-load-filter.php:552
+msgid "Post : Link"
+msgstr ""
+
+#: ../plugin-load-filter.php:553
+msgid "Post : Gallery"
+msgstr ""
+
+#: ../plugin-load-filter.php:554
+msgid "Post : Status"
+msgstr ""
+
+#: ../plugin-load-filter.php:555
+msgid "Post : Audio"
+msgstr ""
+
+#: ../plugin-load-filter.php:556
+msgid "Post : Chat"
+msgstr ""
+
+#: ../plugin-load-filter.php:560
+msgid "Custom Post : "
+msgstr ""
+
+#: ../plugin-load-filter.php:567 ../plugin-load-filter.php:607
+msgid "Activate Plugins"
+msgstr ""
+
+#: ../plugin-load-filter.php:590
+msgid "Page Filter Plugin"
+msgstr ""
+
+#: ../plugin-load-filter.php:606
+msgid "Not Use"
+msgstr ""
+
+#: ../plugin-load-filter.php:612
+msgid "Save"
+msgstr ""

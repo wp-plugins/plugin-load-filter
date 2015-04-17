@@ -1,0 +1,215 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plf\n"
+"POT-Creation-Date: 2015-04-14 17:51+0900\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Yasunari Enomoto <enomoto@celtislab.net>\n"
+"Language-Team: \n"
+"Language: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#. Description of the plugin/theme
+msgid ""
+"Dynamically activate the selected plugins for each page. Response will be "
+"faster by filtering plugins."
+msgstr ""
+"ページタイプや投稿毎に選択したプラグインを動的に有効化することが出来ます。プ"
+"ラグインをフィルタリングするとレスポンスが高速化します。"
+
+#: ../plugin-load-filter.php:145
+msgid "Plugin Load Filter"
+msgstr ""
+
+#: ../plugin-load-filter.php:366
+msgid "Page Filter is not registered"
+msgstr "Page Filter にプラグインが登録されていません"
+
+#: ../plugin-load-filter.php:420
+msgid "Type"
+msgstr ""
+
+#: ../plugin-load-filter.php:420
+msgid "Plugins"
+msgstr ""
+
+#: ../plugin-load-filter.php:441
+msgid "Edit"
+msgstr ""
+
+#: ../plugin-load-filter.php:442
+msgid "Delete"
+msgstr ""
+
+#: ../plugin-load-filter.php:456
+msgid "Plugin Load Filter Settings"
+msgstr "プラグインロードフィルター設定"
+
+#: ../plugin-load-filter.php:460
+msgid "Filter Registration"
+msgstr "フィルター登録"
+
+#: ../plugin-load-filter.php:461
+msgid "Page Filter Activation"
+msgstr "Page Filter 有効プラグイン選択"
+
+#: ../plugin-load-filter.php:485
+msgid "Register the plugins to be used only in admin mode."
+msgstr "Admin モードのみで使用されるプラグインを登録します"
+
+#: ../plugin-load-filter.php:488
+msgid ""
+"Register the plugins to be used only in desktop/moble device. (wp_is_mobile "
+"function use)"
+msgstr ""
+"Desktop / Mobile デバイスのみで使用されるプラグインを登録します"
+"（wp_is_mobile 関数使用）"
+
+#: ../plugin-load-filter.php:491
+msgid ""
+"Register the plugins for selecting whether to activate each Page type or "
+"Post."
+msgstr "ページタイプや投稿毎に有効化の選択対象とするプラグインを登録します"
+
+#: ../plugin-load-filter.php:492
+msgid ""
+"Page Filter registration plugins are once blocked, but is activated by "
+"\"Page filter Activation\" setting."
+msgstr ""
+"ここに登録されたプラグインは一旦ブロックされますが、Page Filter 有効プラグイ"
+"ン選択の設定条件に応じて有効化されます"
+
+#: ../plugin-load-filter.php:494
+msgid ""
+"<strong>[Note]</strong> Running condition is unknown plugin, please do not "
+"register. Unregistered plugins are usually loaded."
+msgstr ""
+"※動作条件が不明なプラグインまで登録する必要はありません。フィルターに登録しな"
+"いプラグインは通常どうり有効化されます"
+
+#: ../plugin-load-filter.php:498
+msgid "Filter Type"
+msgstr "フィルタータイプ"
+
+#: ../plugin-load-filter.php:500
+msgid "Admin"
+msgstr ""
+
+#: ../plugin-load-filter.php:501
+msgid "Desktop"
+msgstr ""
+
+#: ../plugin-load-filter.php:502
+msgid "Mobile"
+msgstr ""
+
+#: ../plugin-load-filter.php:503
+msgid "Page Filter"
+msgstr ""
+
+#: ../plugin-load-filter.php:513 ../plugin-load-filter.php:575
+msgid "Clear"
+msgstr "クリア"
+
+#: ../plugin-load-filter.php:514 ../plugin-load-filter.php:576
+msgid "Entry &raquo;"
+msgstr "登録 &raquo;"
+
+#: ../plugin-load-filter.php:534
+msgid ""
+"Select the plugin from \"Page Filter\" registration to activate in each Page "
+"type."
+msgstr ""
+"\"Page Filter\" に登録したプラグインからページタイプ別に有効化するプラグイン"
+"を選択します"
+
+#: ../plugin-load-filter.php:535
+msgid "Can be selected plugins to activate from Post content editing screen."
+msgstr "投稿や固定ページの各編集画面からも有効化するプラグインを選択出来ます"
+
+#: ../plugin-load-filter.php:540
+msgid "Page type"
+msgstr "ページタイプ"
+
+#: ../plugin-load-filter.php:542
+msgid "Home/Front-page"
+msgstr "ホーム/フロントページ"
+
+#: ../plugin-load-filter.php:543
+msgid "Archive page"
+msgstr "アーカイブページ"
+
+#: ../plugin-load-filter.php:544
+msgid "Search page"
+msgstr "検索結果ページ"
+
+#: ../plugin-load-filter.php:545
+msgid "Attachment page"
+msgstr "添付ページ"
+
+#: ../plugin-load-filter.php:546
+msgid "Page"
+msgstr "固定ページ"
+
+#: ../plugin-load-filter.php:547
+msgid "Post : Standard"
+msgstr "投稿ページ : 標準フォーマット"
+
+#: ../plugin-load-filter.php:548
+msgid "Post : Aside"
+msgstr "投稿フォーマット : アサイド"
+
+#: ../plugin-load-filter.php:549
+msgid "Post : Image"
+msgstr "投稿フォーマット : 画像"
+
+#: ../plugin-load-filter.php:550
+msgid "Post : Video"
+msgstr "投稿フォーマット : 動画"
+
+#: ../plugin-load-filter.php:551
+msgid "Post : Quote"
+msgstr "投稿フォーマット : 引用"
+
+#: ../plugin-load-filter.php:552
+msgid "Post : Link"
+msgstr "投稿フォーマット : リンク"
+
+#: ../plugin-load-filter.php:553
+msgid "Post : Gallery"
+msgstr "投稿フォーマット : ギャラリー"
+
+#: ../plugin-load-filter.php:554
+msgid "Post : Status"
+msgstr "投稿フォーマット : ステータス"
+
+#: ../plugin-load-filter.php:555
+msgid "Post : Audio"
+msgstr "投稿フォーマット : 音声"
+
+#: ../plugin-load-filter.php:556
+msgid "Post : Chat"
+msgstr "投稿フォーマット : チャット"
+
+#: ../plugin-load-filter.php:560
+msgid "Custom Post : "
+msgstr "カスタムポスト : "
+
+#: ../plugin-load-filter.php:567 ../plugin-load-filter.php:607
+msgid "Activate Plugins"
+msgstr "有効化するプラグイン"
+
+#: ../plugin-load-filter.php:590
+msgid "Page Filter Plugin"
+msgstr "Page Filter プラグイン"
+
+#: ../plugin-load-filter.php:606
+msgid "Not Use"
+msgstr "使用しない"
+
+#: ../plugin-load-filter.php:612
+msgid "Save"
+msgstr ""
