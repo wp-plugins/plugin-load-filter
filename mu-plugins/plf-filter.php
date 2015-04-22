@@ -2,7 +2,7 @@
 /*
   Plugin Name: plugin load filter [plf-filter]
   Description: Dynamically activated only plugins that you have selected in each page. [Note] plf-filter has been automatically installed / deleted by Activate / Deactivate of "load filter plugin".
-  Version: 2.0.0
+  Version: 2.0.1
   Plugin URI: http://celtislab.net/wp_plugin_load_filter
   Author: enomoto@celtislab
   Author URI: http://celtislab.net/
@@ -256,8 +256,10 @@ class Plf_filter {
             $GLOBALS['wp']->query_posts();
         }
         //Only available display pages (login, cron, ajax request ... excluded)
+        //downloadmanager plugin downloadlink request [home]/?wpdmact=XXXXXX  exclude home GET query
         global $wp_query;
         if((is_home() || is_front_page() || is_archive() || is_search() || is_singular()) == false 
+                || (is_home() && !empty($_GET))
                 || (is_singular() && empty($wp_query->post))){
             return false;
         }

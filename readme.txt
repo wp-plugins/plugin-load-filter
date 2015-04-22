@@ -3,7 +3,7 @@ Contributors: enomoto celtislab
 Tags: plugin, dynamic activate, dynamic deactivate, filter, logic
 Requires at least: 3.9
 Tested up to: 4.1
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,14 +12,16 @@ Dynamically activate the selected plugins for each page. Response will be faster
 == Description ==
 
 Although have installed a lot of plugins, if you do not want to activate for all of the pages, you will be able to deactivate unnecessary plugins of each individual page.
-Through the filter activation of plugins, you can speed up the display response, you will be able to prevent conflicts between plugins.
-If the case other than blog, such as to provide some service as a Web application, you can also distinguish the plugins for blog and Web applications.
+Through the filter activation of plugins, you can speed up the display response.
 
 Features
 
  * Support Post Format type
  * Support Custom Post type
  * Support Jetpack Modules filtering
+
+If the case other than blog, such as to provide some service as a Web application, you can also distinguish the plugins for blog and Web applications.
+
 
 [日本語の説明](http://celtislab.net/wp_plugin_load_filter/ "Documentation in Japanese")
 
@@ -67,4 +69,6 @@ Usage
 = 2.0.0 =
 * 2015-04-16  Release
  
+= 2.0.1 =
+* 2015-04-22  Exclude GET request(with? Parameters) to the home page from the filter. For example, Link to download the Download Manager plugins.
 
