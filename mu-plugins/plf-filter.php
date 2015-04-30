@@ -2,7 +2,7 @@
 /*
   Plugin Name: plugin load filter [plf-filter]
   Description: Dynamically activated only plugins that you have selected in each page. [Note] plf-filter has been automatically installed / deleted by Activate / Deactivate of "load filter plugin".
-  Version: 2.0.1
+  Version: 2.1.0
   Plugin URI: http://celtislab.net/wp_plugin_load_filter
   Author: enomoto@celtislab
   Author URI: http://celtislab.net/
@@ -281,7 +281,7 @@ class Plf_filter {
             //admin mode filter
             if(!empty($filter['_admin']['plugins'])){
                 if(in_array($p_key, array_map("trim", explode(',', $filter['_admin']['plugins']))))
-                    $unload = true;    
+                    $unload = true;
             }
             //desktop/mobile device filter
             if(!$unload){
@@ -354,8 +354,9 @@ class Plf_filter {
                     }
                 }
             }
-            if(!$unload)
+            if(!$unload) {
                 $new_value[] = $item;
+            }
         }
         //singular page to filter value cache
         if(is_singular()){

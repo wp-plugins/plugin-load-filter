@@ -2,8 +2,8 @@
 Contributors: enomoto celtislab
 Tags: plugin, dynamic activate, dynamic deactivate, filter, logic
 Requires at least: 3.9
-Tested up to: 4.1
-Stable tag: 2.0.1
+Tested up to: 4.2
+Stable tag: 2.1.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -72,3 +72,5 @@ Usage
 = 2.0.1 =
 * 2015-04-22  Exclude GET request(with? Parameters) to the home page from the filter. For example, Link to download the Download Manager plugins.
 
+= 2.1.0 =
+* 2015-04-30  Change user interface option settings screen.

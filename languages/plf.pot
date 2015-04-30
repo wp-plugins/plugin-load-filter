@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: plf\n"
-"POT-Creation-Date: 2015-04-14 17:51+0900\n"
-"PO-Revision-Date: 2015-04-14 17:52+0900\n"
+"POT-Creation-Date: 2015-04-28 18:50+0900\n"
+"PO-Revision-Date: 2015-04-28 18:51+0900\n"
 "Last-Translator: Yasunari Enomoto <enomoto@celtislab.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,188 +18,176 @@ msgstr ""
 msgid "Dynamically activate the selected plugins for each page. Response will be faster by filtering plugins."
 msgstr ""
 
-#: ../plugin-load-filter.php:145
+#: ../plugin-load-filter.php:151
 msgid "Plugin Load Filter"
 msgstr ""
 
-#: ../plugin-load-filter.php:366
+#: ../plugin-load-filter.php:306 ../plugin-load-filter.php:577
 msgid "Page Filter is not registered"
 msgstr ""
 
-#: ../plugin-load-filter.php:420
-msgid "Type"
-msgstr ""
-
-#: ../plugin-load-filter.php:420
+#: ../plugin-load-filter.php:372 ../plugin-load-filter.php:436
 msgid "Plugins"
 msgstr ""
 
-#: ../plugin-load-filter.php:441
-msgid "Edit"
+#: ../plugin-load-filter.php:373
+msgid "Normal Load"
 msgstr ""
 
-#: ../plugin-load-filter.php:442
-msgid "Delete"
-msgstr ""
-
-#: ../plugin-load-filter.php:456
-msgid "Plugin Load Filter Settings"
-msgstr ""
-
-#: ../plugin-load-filter.php:460
-msgid "Filter Registration"
-msgstr ""
-
-#: ../plugin-load-filter.php:461
-msgid "Page Filter Activation"
-msgstr ""
-
-#: ../plugin-load-filter.php:485
-msgid "Register the plugins to be used only in admin mode."
-msgstr ""
-
-#: ../plugin-load-filter.php:488
-msgid ""
-"Register the plugins to be used only in desktop/moble device. (wp_is_mobile "
-"function use)"
-msgstr ""
-
-#: ../plugin-load-filter.php:491
-msgid ""
-"Register the plugins for selecting whether to activate each Page type or "
-"Post."
-msgstr ""
-
-#: ../plugin-load-filter.php:492
-msgid ""
-"Page Filter registration plugins are once blocked, but is activated by "
-"\"Page filter Activation\" setting."
-msgstr ""
-
-#: ../plugin-load-filter.php:494
-msgid ""
-"<strong>[Note]</strong> Running condition is unknown plugin, please do not "
-"register. Unregistered plugins are usually loaded."
-msgstr ""
-
-#: ../plugin-load-filter.php:498
-msgid "Filter Type"
-msgstr ""
-
-#: ../plugin-load-filter.php:500
+#: ../plugin-load-filter.php:374
 msgid "Admin"
 msgstr ""
 
-#: ../plugin-load-filter.php:501
+#: ../plugin-load-filter.php:375
 msgid "Desktop"
 msgstr ""
 
-#: ../plugin-load-filter.php:502
+#: ../plugin-load-filter.php:376
 msgid "Mobile"
 msgstr ""
 
-#: ../plugin-load-filter.php:503
+#: ../plugin-load-filter.php:377
 msgid "Page Filter"
 msgstr ""
 
-#: ../plugin-load-filter.php:513 ../plugin-load-filter.php:575
-msgid "Clear"
-msgstr ""
-
-#: ../plugin-load-filter.php:514 ../plugin-load-filter.php:576
-msgid "Entry &raquo;"
-msgstr ""
-
-#: ../plugin-load-filter.php:534
-msgid ""
-"Select the plugin from \"Page Filter\" registration to activate in each Page "
-"type."
-msgstr ""
-
-#: ../plugin-load-filter.php:535
-msgid "Can be selected plugins to activate from Post content editing screen."
-msgstr ""
-
-#: ../plugin-load-filter.php:540
-msgid "Page type"
-msgstr ""
-
-#: ../plugin-load-filter.php:542
+#: ../plugin-load-filter.php:437
 msgid "Home/Front-page"
 msgstr ""
 
-#: ../plugin-load-filter.php:543
+#: ../plugin-load-filter.php:438
 msgid "Archive page"
 msgstr ""
 
-#: ../plugin-load-filter.php:544
+#: ../plugin-load-filter.php:439
 msgid "Search page"
 msgstr ""
 
-#: ../plugin-load-filter.php:545
+#: ../plugin-load-filter.php:440
 msgid "Attachment page"
 msgstr ""
 
-#: ../plugin-load-filter.php:546
+#: ../plugin-load-filter.php:441
 msgid "Page"
 msgstr ""
 
-#: ../plugin-load-filter.php:547
+#: ../plugin-load-filter.php:442
 msgid "Post : Standard"
 msgstr ""
 
-#: ../plugin-load-filter.php:548
-msgid "Post : Aside"
-msgstr ""
-
-#: ../plugin-load-filter.php:549
+#: ../plugin-load-filter.php:443
 msgid "Post : Image"
 msgstr ""
 
-#: ../plugin-load-filter.php:550
-msgid "Post : Video"
-msgstr ""
-
-#: ../plugin-load-filter.php:551
-msgid "Post : Quote"
-msgstr ""
-
-#: ../plugin-load-filter.php:552
-msgid "Post : Link"
-msgstr ""
-
-#: ../plugin-load-filter.php:553
+#: ../plugin-load-filter.php:444
 msgid "Post : Gallery"
 msgstr ""
 
-#: ../plugin-load-filter.php:554
-msgid "Post : Status"
+#: ../plugin-load-filter.php:445
+msgid "Post : Video"
 msgstr ""
 
-#: ../plugin-load-filter.php:555
+#: ../plugin-load-filter.php:446
 msgid "Post : Audio"
 msgstr ""
 
-#: ../plugin-load-filter.php:556
+#: ../plugin-load-filter.php:447
+msgid "Post : Aside"
+msgstr ""
+
+#: ../plugin-load-filter.php:448
+msgid "Post : Quote"
+msgstr ""
+
+#: ../plugin-load-filter.php:449
+msgid "Post : Link"
+msgstr ""
+
+#: ../plugin-load-filter.php:450
+msgid "Post : Status"
+msgstr ""
+
+#: ../plugin-load-filter.php:451
 msgid "Post : Chat"
 msgstr ""
 
-#: ../plugin-load-filter.php:560
+#: ../plugin-load-filter.php:456
 msgid "Custom Post : "
 msgstr ""
 
-#: ../plugin-load-filter.php:567 ../plugin-load-filter.php:607
-msgid "Activate Plugins"
+#: ../plugin-load-filter.php:530
+msgid "Plugin Load Filter Settings"
 msgstr ""
 
-#: ../plugin-load-filter.php:590
+#: ../plugin-load-filter.php:534
+msgid "Filter Registration"
+msgstr ""
+
+#: ../plugin-load-filter.php:535
+msgid "Page Filter Activation"
+msgstr ""
+
+#: ../plugin-load-filter.php:542
+msgid ""
+"If you want to filter the loading of plugins, click select <span class="
+"\"dashicons dashicons-admin-plugins\"></span> mark of the filter type."
+msgstr ""
+
+#: ../plugin-load-filter.php:544
+msgid "Plugins to be used only in admin mode."
+msgstr ""
+
+#: ../plugin-load-filter.php:547
+msgid ""
+"Plugins to be used only in desktop/moble device. (wp_is_mobile function use)"
+msgstr ""
+
+#: ../plugin-load-filter.php:550
+msgid "Plugins for selecting whether to activate each Page type or Post."
+msgstr ""
+
+#: ../plugin-load-filter.php:551
+msgid ""
+"Selected page filter plugins are once blocked, but is activated by \"Page "
+"filter Activation\" setting."
+msgstr ""
+
+#: ../plugin-load-filter.php:554 ../plugin-load-filter.php:569
+msgid "Clear"
+msgstr ""
+
+#: ../plugin-load-filter.php:555
+msgid "Filter Entry &raquo;"
+msgstr ""
+
+#: ../plugin-load-filter.php:565
+msgid ""
+"Select plugins to be activated for each page type by clicking on <span class="
+"\"dashicons dashicons-admin-plugins\"></span> mark from \"page filter\" "
+"registered plugins."
+msgstr ""
+
+#: ../plugin-load-filter.php:566
+msgid ""
+"You can also select plugins to activate from Post/Page content editing "
+"screen."
+msgstr ""
+
+#: ../plugin-load-filter.php:570
+msgid "Activate Plugin Entry &raquo;"
+msgstr ""
+
+#: ../plugin-load-filter.php:593
 msgid "Page Filter Plugin"
 msgstr ""
 
-#: ../plugin-load-filter.php:606
+#: ../plugin-load-filter.php:609
 msgid "Not Use"
 msgstr ""
 
-#: ../plugin-load-filter.php:612
+#: ../plugin-load-filter.php:610
+msgid "Activate Plugins"
+msgstr ""
+
+#: ../plugin-load-filter.php:615
 msgid "Save"
 msgstr ""

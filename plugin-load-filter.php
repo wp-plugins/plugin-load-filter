@@ -2,7 +2,7 @@
 /*
   Plugin Name: plugin load filter
   Description: Dynamically activate the selected plugins for each page. Response will be faster by filtering plugins.
-  Version: 2.0.0
+  Version: 2.1.0
   Plugin URI: http://celtislab.net/wp_plugin_load_filter
   Author: enomoto@celtislab
   Author URI: http://celtislab.net/
@@ -16,7 +16,6 @@ $Plf_setting = new Plf_setting();
 class Plf_setting {
     
     private $plugins_inf = '';  //active plugin/module infomation
-    private $editem = false; 
     private $filter = array();  //filter option data
     private $tab_num = 0;
     
@@ -27,7 +26,7 @@ class Plf_setting {
     <style type="text/css">
     .plugins-list { max-width : 480px; min-height: 80px; max-height: 320px; overflow: auto; border: 1px solid #CEE1EF; padding:0.5em 0.5em;}
     ul.plugins-list ul { margin-left: 20px; }
-    ul.plugins-list li { margin: 0; padding: 0; line-height: 22px; word-wrap: break-word;}
+    ul.plugins-list li { margin: 0; padding: 0; line-height: 22px; word-wrap: break-word;}  
     </style>
     <?php }    
 
@@ -50,6 +49,13 @@ class Plf_setting {
     .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { border: 1px solid #dddddd; background-color: #0073ea; font-weight: bold; color: #ffffff; }
     .ui-state-hover a, .ui-state-hover a:hover, .ui-state-hover a:link, .ui-state-hover a:visited { color: #ffffff; text-decoration: none; }
     .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited { color: #ffffff; text-decoration: none; }
+
+    #registration-table input[type=radio], #activation-table input[type=checkbox] {  height: 25px; width: 25px; opacity: 0;}    
+    .dashicons:before { font-size: 24px; }    
+    .radio-green label, .radio-red label, .altcheckbox label { color: #ddd; margin-left: -28px; }
+    .radio-green input[type="radio"]:checked + label { color: #339966; }   
+    .radio-red input[type="radio"]:checked + label { color: #ff0000; }   
+    .altcheckbox input[type="checkbox"]:checked + label { color: #339966; }   
     </style>
     <?php }    
     
@@ -161,17 +167,41 @@ class Plf_setting {
     function action_posts() {
         if (current_user_can( 'edit_plugins' )) {
             if( isset($_POST['edit_regist_filter']) ) {
-                if(isset($_POST['plf_option']['_tag'])){
+                if(isset($_POST['plfregist'])){
                     check_admin_referer('plugin_load_filter');
-                    $option["plugins"] = '';
-                    if(isset($_POST['plf_option']['plugins'])){
+                    foreach( array('_admin', '_desktop', '_mobile', '_pagefilter') as $item){
                         $plugins = array();
-                        foreach($_POST['plf_option']['plugins'] as $plugin => $val) { 
-                            $plugins[] = $plugin;
+                        foreach ( $_POST['plfregist'] as $p_key => $val ) {
+                            if($val == $item)
+                                $plugins[$p_key] = $val;
                         }
-                        $option["plugins"] = implode(",", $plugins);
+                        if($item == '_pagefilter'){
+                            //If all modules is specified filter, in some cases you want to deactivate plugin itself.
+                            $jbase = $cbase = '';
+                            $jall = $call = true;
+                            foreach ( $_POST['plfregist'] as $p_key => $val ) {
+                                if(strpos($p_key, 'jetpack/') !== false)
+                                    $jbase = $p_key;
+                                else if(strpos($p_key, 'celtispack/') !== false)
+                                    $cbase = $p_key;
+                                else if(strpos($p_key, 'jetpack_module/') !== false){
+                                    if($val != '_pagefilter' && $val != '_admin'){
+                                        $jall = false;
+                                    }
+                                }
+                                else if(strpos($p_key, 'celtispack_module/') !== false){
+                                    if($val != '_pagefilter' && $val != '_admin')
+                                        $call = false;
+                                }
+                            }
+                            if(!empty($jbase) && $jall === false)
+                                unset($plugins[$jbase]);
+                            if(!empty($cbase) && $call === false)
+                                unset($plugins[$cbase]);
+                        }
+                        $option["plugins"] = implode(",", array_keys($plugins));
+                        $this->filter[$item] = $option;
                     }
-                    $this->filter[$_POST['plf_option']['_tag']] = $option;
                     $this->filter['updated'] = strtotime("now");
                     update_option('plf_option', $this->filter );
                 }
@@ -179,81 +209,54 @@ class Plf_setting {
                 exit;
             }
             elseif( isset($_POST['clear_regist_filter']) ) {
+                check_admin_referer('plugin_load_filter');
+                foreach( array('_admin', '_desktop', '_mobile', '_pagefilter') as $item){
+                    $this->filter[$item] = '';
+                }
+                $this->filter['updated'] = strtotime("now");
+                update_option('plf_option', $this->filter );
                 header('Location: ' . admin_url('plugins.php?page=plugin_load_filter_admin_manage_page'));
                 exit;
             }
-            else if( isset($_POST['new_page_filter']) || isset($_POST['edit_page_filter']) ) {
-                if(isset($_POST['plf_option']['tag'])){
+            else if(isset($_POST['edit_activate_page_filter']) ) {
+                if(isset($_POST['plfactive'])){
                     check_admin_referer('plugin_load_filter');
-                    $option["plugins"] = '';
-                    if(isset($_POST['plf_option']['plugins'])){
+                    $group = array_keys($_POST['plfactive']);
+                    foreach( $group as $item){
                         $plugins = array();
-                        foreach($_POST['plf_option']['plugins'] as $plugin => $val) { 
-                            $plugins[] = $plugin;
+                        foreach ( $_POST['plfactive'][$item] as $p_key => $val ) {
+                            if($val == '1')
+                                $plugins[] = $p_key;
                         }
                         $option["plugins"] = implode(",", $plugins);
+                        $this->filter['group'][$item] = $option;
                     }
-                    $this->filter['group'][$_POST['plf_option']['tag']] = $option;
                     $this->filter['updated'] = strtotime("now");
                     update_option('plf_option', $this->filter );
                 }
                 header('Location: ' . admin_url('plugins.php?page=plugin_load_filter_admin_manage_page&action=tab_1'));
                 exit;
             } 
-            elseif( isset($_POST['clear_page_filter']) ) {
+            elseif( isset($_POST['clear_activate_page_filter']) ) {
+                check_admin_referer('plugin_load_filter');
+                $group = array_keys($_POST['plfactive']);
+                foreach( $group as $item){
+                    $this->filter['group'][$item] = '';
+                }
+                $this->filter['updated'] = strtotime("now");
+                update_option('plf_option', $this->filter );
                 header('Location: ' . admin_url('plugins.php?page=plugin_load_filter_admin_manage_page&action=tab_1'));
                 exit;
             }
-            else if (!empty($_GET['action'])) {
-                if( $_GET['action']=='edit_filter_table') {
-                    $this->editem =  $_GET['item'];
-                    $this->tab_num = (0 === strpos($_GET['item'], '_'))? 0 : 1;
-                }
-                elseif( $_GET['action']=='del_filter_table') {
-                    if( !empty( $_GET['item'])){
-                        check_admin_referer( 'plugin_load_filter' );
-                        $tab_action = '';
-                        if(0 === strpos($_GET['item'], '_')){
-                            unset($this->filter[$_GET['item']]);
-                        }
-                        else {
-                            unset($this->filter['group'][$_GET['item']]);
-                            $tab_action = '&action=tab_1';
-                        }
-                        $this->filter['updated'] = strtotime("now");
-                        update_option('plf_option', $this->filter );
-                    }
-                    header('Location: ' . admin_url('plugins.php?page=plugin_load_filter_admin_manage_page'.$tab_action));
-                    exit;
-                } 
-                elseif( $_GET['action']=='tab_1') {
-                    $this->tab_num = 1;
-                }
+            if(!empty($_GET['action']) && $_GET['action']=='tab_1') {
+                $this->tab_num = 1;
             }
         }
     }
 
-    public function filter_stat( $sw, $stat) {
-        if( $sw === 'exclude') {
-            if(empty($stat))
-                $str = '<span style="color: #339966;">"Page filter plugins Activate"</span>';
-            else
-                $str = '<span style="color: #ff0000;">' . $stat. '</span>';
-        }
-        elseif( $sw === 'include') {
-            if(empty($stat))
-                $str = '<span style="color: #ff0000;">"Page filter plugins Deactivate"</span>';
-            else
-                $str = '<span style="color: #339966;">' . $stat. '</span>';
-        }
-        else
-            $str = $stat;
-        return $str;
-    }   
-
     //Plugin or Module key to name
-    // $type : smart/csv/list/tree
-    public function pluginkey_to_name( $infkey, $type='smart') {
+    // $type : list/smart/tree
+    public function pluginkey_to_name( $infkey, $type='list') {
 
         $name = '';
         if(strpos($infkey, 'jetpack_module/') !== false){
@@ -289,73 +292,10 @@ class Plf_setting {
 	static function checkbox($name, $value, $label = '') {
         return "<label><input type='checkbox' name='$name' value='1' " . checked( $value, 1, false ).  "/> $label</label>";
 	}
-    //DropdownList
-	static function dropdown($name, $items, $selected, $args=null) {
-		$defaults = array( 'id' => $name, 'class' => "", 'multiple' => false );
-		foreach($items as $key => &$value) {
-			if (is_array($value))
-				$value = array_shift($value);
-		}
-		$opt = wp_parse_args($args, $defaults);
-		$name = ($name) ? "name='$name'" : "";
-        $id   = ($opt['id']) ? "id='${opt['id']}'" : "";
-        $class = ($opt['class']) ? "class='${opt['class']}'" : "";
-		$multiple = ($opt['multiple']) ? "multiple='multiple'" : "";
-
-		$html = "<select $name $id $class $multiple >";
-		foreach ((array)$items as $key => $label) {
-			$key = esc_attr($key);
-			$label = esc_attr($label);
-			$html .= "<option value='$key' " . selected($selected, $key, false) . ">$label</option>";
-		}
-		$html .= "</select>";
-		return $html;
+	static function altcheckbox($name, $value, $label = '') {
+        return "<input type='hidden' name='$name' value='0'><input type='checkbox' name='$name' value='1' " . checked( $value, 1, false ).  "/><label> $label</label>";
 	}
     
-    //Plugin Select Checkbox (plugin-modules tree)
-    // $plugins : array : all active plugins 
-    // $checked_cvplugins : csv string : checked plugins
-    function plugins_checklist( $plugins, $checked_cvplugins ) {
-        
-        $nplugins = $jmodules = $cmodules =  array();
-        $type = 'tree';
-        foreach ( $plugins as $p_key => $p_data ) {
-            $p_name = $this->pluginkey_to_name($p_key, $type);
-            if(empty($p_name))
-                continue;
-            if(strpos($p_key, 'jetpack_module/') !== false)
-                $jmodules[] = $p_key;
-            else if(strpos($p_key, 'celtispack_module/') !== false)
-                $cmodules[] = $p_key;
-            else 
-                $nplugins[] = $p_key; 
-        }
-        $chkplugins = array_map("trim", explode(',', $checked_cvplugins));
-        $html =  '<ul class="plugins-list">';
-        foreach ( $nplugins as $p_key ) {
-            $p_name = $this->pluginkey_to_name($p_key, $type);                
-            $checked = in_array( $p_key, $chkplugins ) ? true : false;
-            $html .= '<li>' . self::checkbox("plf_option[plugins][$p_key]", $checked, esc_attr($p_name)) . '</li>';
-
-            $modules = array();
-            if(strpos($p_key, 'jetpack/') !== false)
-                $modules = $jmodules;
-            else if(strpos($p_key, 'celtispack/') !== false)
-                $modules = $cmodules;
-            if(!empty($modules)){
-                $html .= '<ul class="modules-list">';
-                foreach ( $modules as $m_key ) {
-                    $m_name = $this->pluginkey_to_name($m_key, $type);
-                    $mchecked = ($checked || in_array( $m_key, $chkplugins )) ? true : false;
-                    $html .= '<li>' . self::checkbox("plf_option[plugins][$m_key]", $mchecked, esc_attr($m_name)) . '</li>';
-                }
-                $html .= '</ul>';
-            }
-        }
-        $html .= '</ul>';
-        return $html;
-    }
-
     //Plugin pagefilter Selected Checkbox (plugin and modules list)
     // $plugins : array : all active plugins 
     // $select_cvplugins  : csv string : pagefilter selected plugins 
@@ -365,45 +305,42 @@ class Plf_setting {
         if(empty($select_cvplugins))
             return __('Page Filter is not registered', 'plf');
         
-        $nplugins = $jmodules = $cmodules = $allmodule = array();
-        $type = 'list';
+        $nplugins = $jmodules = $cmodules = array();
         foreach ( $plugins as $p_key => $p_data ) {
-            $p_name = $this->pluginkey_to_name($p_key, $type);
+            $p_name = $this->pluginkey_to_name($p_key);
             if(empty($p_name))
                 continue;
             if(strpos($p_key, 'jetpack_module/') !== false)
                 $jmodules[] = $p_key;
             else if(strpos($p_key, 'celtispack_module/') !== false)
                 $cmodules[] = $p_key;
-            else {
-                if(strpos($p_key, 'jetpack/') !== false && strpos($select_cvplugins, $p_key) !== false)
-                    $allmodule['jetpack'] = $p_key;
-                else if(strpos($p_key, 'celtispack/') !== false && strpos($select_cvplugins, $p_key) !== false)
-                    $allmodule['celtispack'] = $p_key;
-                else
-                    $nplugins[] = $p_key; 
-            }
+            else 
+                $nplugins[] = $p_key; 
         }
         $selplugins = array_map("trim", explode(',', $select_cvplugins));
         $chkplugins = array_map("trim", explode(',', $checked_cvplugins));
         $html =  '<ul class="plugins-list">';
         foreach ( $nplugins as $p_key ) {
-            if(in_array( $p_key, $selplugins )) {
-                $p_name = $this->pluginkey_to_name($p_key, $type);                
-                $checked = in_array( $p_key, $chkplugins ) ? true : false;
-                $html .= '<li>' . self::checkbox("plf_option[plugins][$p_key]", $checked, esc_attr($p_name)) . '</li>';
+            if(strpos($p_key, 'jetpack/') !== false){
+                foreach ( $jmodules as $p_key ) {
+                    if(in_array( $p_key, $selplugins )){
+                        $p_name = $this->pluginkey_to_name($p_key);                
+                        $checked = in_array( $p_key, $chkplugins ) ? true : false;
+                        $html .= '<li>' . self::checkbox("plf_option[plugins][$p_key]", $checked, esc_attr($p_name)) . '</li>';
+                    }
+                }
             }
-        }
-        foreach ( $jmodules as $p_key ) {
-            if(!empty($allmodule['jetpack']) || in_array( $p_key, $selplugins )){
-                $p_name = $this->pluginkey_to_name($p_key, $type);                
-                $checked = in_array( $p_key, $chkplugins ) ? true : false;
-                $html .= '<li>' . self::checkbox("plf_option[plugins][$p_key]", $checked, esc_attr($p_name)) . '</li>';
+            else if(strpos($p_key, 'celtispack/') !== false){
+                foreach ( $cmodules as $p_key ) {
+                    if(in_array( $p_key, $selplugins )){
+                        $p_name = $this->pluginkey_to_name($p_key);                
+                        $checked = in_array( $p_key, $chkplugins ) ? true : false;
+                        $html .= '<li>' . self::checkbox("plf_option[plugins][$p_key]", $checked, esc_attr($p_name)) . '</li>';
+                    }
+                }
             }
-        }
-        foreach ( $cmodules as $p_key ) {
-            if(!empty($allmodule['celtispack']) || in_array( $p_key, $selplugins )){
-                $p_name = $this->pluginkey_to_name($p_key, $type);                
+            else if(in_array( $p_key, $selplugins )) {
+                $p_name = $this->pluginkey_to_name($p_key);                
                 $checked = in_array( $p_key, $chkplugins ) ? true : false;
                 $html .= '<li>' . self::checkbox("plf_option[plugins][$p_key]", $checked, esc_attr($p_name)) . '</li>';
             }
@@ -411,37 +348,174 @@ class Plf_setting {
         $html .= '</ul>';
         return $html;
     }
+
+    public function plfregist_item($key, $val) {
+        $p_name = $this->pluginkey_to_name($key);
+        $opt_name = "plfregist[$key]";
+        ?>
+        <tr id="plfregist_<?php echo $key; ?>">
+          <td><?php echo $p_name; ?></td>
+          <td class="radio-green"><input type="radio" name="<?php echo $opt_name; ?>" value='' <?php checked('', $val); ?>/><label><span class="dashicons dashicons-admin-plugins"></span></label></td>
+          <td class="radio-red"><input type="radio" name="<?php echo $opt_name; ?>" value="_admin" <?php checked('_admin', $val); ?>/><label><span class="dashicons dashicons-admin-plugins"></span></label></td>
+          <td class="radio-red"><input type="radio" name="<?php echo $opt_name; ?>" value="_desktop" <?php checked('_desktop', $val); ?>/><label><span class="dashicons dashicons-admin-plugins"></span></label></td>
+          <td class="radio-red"><input type="radio" name="<?php echo $opt_name; ?>" value="_mobile" <?php checked('_mobile', $val); ?>/><label><span class="dashicons dashicons-admin-plugins"></span></label></td>
+          <td class="radio-red"><input type="radio" name="<?php echo $opt_name; ?>" value="_pagefilter" <?php checked('_pagefilter', $val); ?>/><label><span class="dashicons dashicons-admin-plugins"></span></label></td>
+        </tr>
+        <?php
+    }
     
-    //Plugin Filter Table 
-    public function plf_table($tags, $default) {
+    //Filterring plugins select   
+    public function plfregist_table($plugins, $filter) {
     ?>
-    <table class="widefat">
+    <table id="registration-table" class="widefat">
         <thead>
-           <tr><th width="12%"><?php _e('Type'); ?></th><th width="76%"><?php _e('Plugins'); ?></th><th width="12%" colspan="2">&nbsp;</th></tr>
+           <tr><th ><?php _e('Plugins'); ?></th>
+               <th ><?php _e('Normal Load', 'plf'); ?></th>
+               <th ><?php _e('Admin', 'plf'); ?></th>
+               <th ><?php _e('Desktop', 'plf'); ?></th>
+               <th ><?php _e('Mobile', 'plf'); ?></th>
+               <th ><?php _e('Page Filter', 'plf'); ?></th>
+           </tr>
         </thead>
         <tbody>
         <?php
-        if(!empty($tags)){
-            foreach( $tags as $ptag => $val ) {
-                $opt = wp_parse_args( $val,  $default);
-                $plugins = array_map("trim", explode(',', $opt['plugins']));
-                $plist = '';
-                $type = ($ptag == '_pagefilter')? 'smart' : 'csv';
-                foreach ( $plugins as $p_key ) {
-                    $p_name = $this->pluginkey_to_name($p_key, $type);
-                    if(!empty($p_name)){
-                        $sep = (empty($plist))? '' : ', ';
-                        $plist .= $sep . esc_attr($p_name);
+        //plugins filter registoration table
+        $plist = array();
+        foreach ( $plugins as $p_key => $val ) {
+            $name = $this->pluginkey_to_name($p_key);
+            if(!empty($name)) 
+                $plist[$p_key] = '';
+        }
+        foreach( array('_admin', '_desktop', '_mobile', '_pagefilter') as $item){
+            $parr = (!empty($filter[$item]['plugins'])) ? array_map("trim", explode(',', $filter[$item]['plugins'])) : array();
+            foreach ( $plist as $p_key => $val ) {
+                if(empty($val) && in_array($p_key, $parr))
+                    $plist[$p_key] = $item;
+            }
+        }
+        $jlist = $clist = array();
+        foreach ( $plist as $p_key => $val ) {
+            if(strpos($p_key, 'jetpack_module/') !== false){
+                $jlist[$p_key] = $plist[$p_key];
+                unset($plist[$p_key]);
+            }
+            else if(strpos($p_key, 'celtispack_module/') !== false){
+                $clist[$p_key] = $plist[$p_key];
+                unset($plist[$p_key]);
+            }
+        }
+        foreach ( $plist as $p_key => $val ) {
+            $modules = array();
+            if(strpos($p_key, 'jetpack/') !== false)
+                $modules = $jlist;
+            else if(strpos($p_key, 'celtispack/') !== false)
+                $modules = $clist;
+            else
+                $this->plfregist_item($p_key, $val);
+            if(!empty($modules)){
+                echo "<input type='hidden' name='plfregist[$p_key]' value='_pagefilter'>";
+                foreach ( $modules as $m_key => $val) {
+                    $this->plfregist_item($m_key, $val);
+                }
+            }
+        }
+        ?>
+        </tbody>
+    </table>
+    <?php
+    }
+
+    //Activate plugins select from Page Filter  
+    public function plfactive_table($plugins, $select_cvplugins, $filter) {
+        if(empty($select_cvplugins))
+            return;
+        
+    ?>
+    <table id="activation-table" class="widefat">
+        <thead>
+           <tr><th ><?php _e('Plugins'); ?></th>
+               <th ><span title="<?php _e('Home/Front-page', 'plf'); ?>" class="dashicons dashicons-admin-home"></span><br /><span style="font-size:xx-small">Home</span></th>
+               <th ><span title="<?php _e('Archive page', 'plf'); ?>" class="dashicons dashicons-list-view"></span><br /><span style="font-size:xx-small">Archive</span></th>
+               <th ><span title="<?php _e('Search page', 'plf'); ?>" class="dashicons dashicons-search"></span><br /><span style="font-size:xx-small">Search</span></th>
+               <th ><span title="<?php _e('Attachment page', 'plf'); ?>" class="dashicons dashicons-media-default"></span><br /><span style="font-size:xx-small">Attach</span></th>
+               <th ><span title="<?php _e('Page', 'plf'); ?>" class="dashicons dashicons-admin-page"></span><br /><span style="font-size:xx-small">Page</span></th>
+               <th ><span title="<?php _e('Post : Standard', 'plf'); ?>" class="dashicons dashicons-admin-post"></span><br /><span style="font-size:xx-small">Post</span></th>
+               <th ><span title="<?php _e('Post : Image', 'plf'); ?>" class="dashicons dashicons-format-image"></span><br /><span style="font-size:xx-small">Image</span></th>
+               <th ><span title="<?php _e('Post : Gallery', 'plf'); ?>" class="dashicons dashicons-format-gallery"></span><br /><span style="font-size:xx-small">Gallery</span></th>
+               <th ><span title="<?php _e('Post : Video', 'plf'); ?>" class="dashicons dashicons-format-video"></span><br /><span style="font-size:xx-small">Video</span></th>
+               <th ><span title="<?php _e('Post : Audio', 'plf'); ?>" class="dashicons dashicons-format-audio"></span><br /><span style="font-size:xx-small">Audio</span></th>
+               <th ><span title="<?php _e('Post : Aside', 'plf'); ?>" class="dashicons dashicons-format-aside"></span><br /><span style="font-size:xx-small">Aside</span></th>
+               <th ><span title="<?php _e('Post : Quote', 'plf'); ?>" class="dashicons dashicons-format-quote"></span><br /><span style="font-size:xx-small">Quote</span></th>
+               <th ><span title="<?php _e('Post : Link', 'plf'); ?>" class="dashicons dashicons-admin-links"></span><br /><span style="font-size:xx-small">Link</span></th>
+               <th ><span title="<?php _e('Post : Status', 'plf'); ?>" class="dashicons dashicons-format-status"></span><br /><span style="font-size:xx-small">Status</span></th>
+               <th ><span title="<?php _e('Post : Chat', 'plf'); ?>" class="dashicons dashicons-format-chat"></span><br /><span style="font-size:xx-small">Chat</span></th>
+               <?php
+                $post_types = get_post_types( array('public' => true, '_builtin' => false) );                    
+                foreach ( $post_types as $post_type ) {
+                    if(!empty($post_type)){
+                       $title = __('Custom Post : ', 'plf') . $post_type;
+                       echo "<th ><span title='$title' style='font-size:xx-small'>$post_type</span></th>";
                     }
                 }
-                if(!empty($ptag)){
-                    echo '<tr id="plf_filter_' .$ptag. '">';
-                    echo '<td>'.$ptag.'</td>';
-                    echo '<td>'. $this->filter_stat($opt['filter'], $plist).'</td>';
-                    echo '<td><a class="view" href="'. wp_nonce_url("plugins.php?page=plugin_load_filter_admin_manage_page&amp;action=edit_filter_table&amp;item=$ptag", "plugin_load_filter") . '">' . __( 'Edit' ) . '</a></td>';
-                    echo '<td><a class="delete" href="'. wp_nonce_url("plugins.php?page=plugin_load_filter_admin_manage_page&amp;action=del_filter_table&amp;item=$ptag", "plugin_load_filter") . '">' . __( 'Delete' ) . '</a></td>';
-                    echo '</tr>';
+               ?>
+           </tr>
+        </thead>
+        <tbody>
+        <?php
+        $nplugins = $jmodules = $cmodules = $allmodule = array();
+        foreach ( $plugins as $p_key => $p_data ) {
+            $p_name = $this->pluginkey_to_name($p_key);
+            if(empty($p_name))
+                continue;
+            if(strpos($p_key, 'jetpack_module/') !== false)
+                $jmodules[] = $p_key;
+            else if(strpos($p_key, 'celtispack_module/') !== false)
+                $cmodules[] = $p_key;
+            else 
+                $nplugins[] = $p_key; 
+        }
+        $selplugins = array_map("trim", explode(',', $select_cvplugins));
+        $chklist = array('home', 'archive', 'search', 'attachment', 'page', 'post', 
+                         'post-image', 'post-gallery', 'post-video', 'post-audio', 'post-aside', 'post-quote', 'post-link', 'post-status', 'post-chat');   
+        $post_types = get_post_types( array('public' => true, '_builtin' => false) );                    
+        foreach ( $post_types as $post_type ) {
+            $chklist[] = $post_type;
+        }
+        foreach ( $nplugins as $p_key ) {
+            if(strpos($p_key, 'jetpack/') !== false){
+                foreach ( $jmodules as $p_key ) {
+                    if(in_array( $p_key, $selplugins )){
+                        $p_name = $this->pluginkey_to_name($p_key);                
+                        echo "<tr><td>$p_name</td>";
+                        foreach($chklist as $pgtype){
+                            $checked = (empty($filter['group'][$pgtype]['plugins']) || false === strpos($filter['group'][$pgtype]['plugins'], $p_key))? false : true;
+                            echo '<td class="altcheckbox">' . self::altcheckbox("plfactive[$pgtype][$p_key]", $checked, '<span class="dashicons dashicons-admin-plugins"></span>') . '</td>';
+                        }
+                        echo "</tr>";
+                    }
                 }
+            }
+            else if(strpos($p_key, 'celtispack/') !== false){                
+                foreach ( $cmodules as $p_key ) {
+                    if(in_array( $p_key, $selplugins )){
+                        $p_name = $this->pluginkey_to_name($p_key);                
+                        echo "<tr><td>$p_name</td>";
+                        foreach($chklist as $pgtype){
+                            $checked = (empty($filter['group'][$pgtype]['plugins']) || false === strpos($filter['group'][$pgtype]['plugins'], $p_key))? false : true;
+                            echo '<td class="altcheckbox">' . self::altcheckbox("plfactive[$pgtype][$p_key]", $checked, '<span class="dashicons dashicons-admin-plugins"></span>') . '</td>';
+                        }
+                        echo "</tr>";
+                    }
+                }
+            }
+            else if(in_array( $p_key, $selplugins )) {
+                $p_name = $this->pluginkey_to_name($p_key);                
+                echo "<tr><td>$p_name</td>";
+                foreach($chklist as $pgtype){
+                    $checked = (empty($filter['group'][$pgtype]['plugins']) || false === strpos($filter['group'][$pgtype]['plugins'], $p_key))? false : true;
+                    echo '<td class="altcheckbox">' . self::altcheckbox("plfactive[$pgtype][$p_key]", $checked, '<span class="dashicons dashicons-admin-plugins"></span>') . '</td>';
+                }
+                echo "</tr>";
             }
         }
         ?>
@@ -463,118 +537,47 @@ class Plf_setting {
         <form method="post" >
 		<?php wp_nonce_field( 'plugin_load_filter'); ?>
         <div id="plf-registration-tab" >
-            <?php
-            $default = array( 'filter' => 'exclude', 'plugins' => '');
-            $base = array();
-            foreach($this->filter as $item => $val){
-                if(0 === strpos($item, '_'))
-                    $base[$item] = $this->filter[$item];
-            }
-            $this->plf_table($base, $default);
-
-            $itemtag = '';
-            $option = $default;
-            if( !empty($this->editem) ) {
-                $itemtag = $this->editem;
-                $option = $this->filter[$itemtag];
-            }
-            $option = wp_parse_args( $option, $default);
-            ?>
+            <?php $this->plfregist_table($this->plugins_inf, $this->filter); ?>
             <br />
+            <p><?php _e('If you want to filter the loading of plugins, click select <span class="dashicons dashicons-admin-plugins"></span> mark of the filter type.', 'plf') ?></p>
             <p><strong>[ Admin Filter ]</strong><br />
-              <?php _e('Register the plugins to be used only in admin mode.', 'plf'); ?><br />
+              <?php _e('Plugins to be used only in admin mode.', 'plf'); ?><br />
             </p>
             <p><strong>[ Desktop/Mobile Filter ]</strong><br />
-              <?php _e('Register the plugins to be used only in desktop/moble device. (wp_is_mobile function use)', 'plf'); ?><br />
+              <?php _e('Plugins to be used only in desktop/moble device. (wp_is_mobile function use)', 'plf'); ?><br />
             </p>
             <p><strong>[ Page Filter ]</strong><br />
-              <?php _e('Register the plugins for selecting whether to activate each Page type or Post.', 'plf'); ?><br />
-              <?php _e('Page Filter registration plugins are once blocked, but is activated by "Page filter Activation" setting.', 'plf'); ?><br />
+              <?php _e('Plugins for selecting whether to activate each Page type or Post.', 'plf'); ?><br />
+              <?php _e('Selected page filter plugins are once blocked, but is activated by "Page filter Activation" setting.', 'plf'); ?><br />
             </p>
-            <p><?php _e('<strong>[Note]</strong> Running condition is unknown plugin, please do not register. Unregistered plugins are usually loaded.', 'plf') ?></p>
-            <table width="100%" cellspacing="2" cellpadding="5" class="editform form-table">
-                <tbody>
-                <tr>
-                    <th valign="top" scope="row"><label for="plugin"><?php _e('Filter Type', 'plf'); ?>:</label></th>
-                    <td>
-                        <label><input type="radio" name="plf_option[_tag]" value="_admin" <?php checked('_admin', $itemtag); ?>/><?php _e('Admin', 'plf'); ?></label>
-                        <label><input type="radio" name="plf_option[_tag]" value="_desktop" <?php checked('_desktop', $itemtag); ?>/><?php _e('Desktop', 'plf'); ?></label>
-                        <label><input type="radio" name="plf_option[_tag]" value="_mobile" <?php checked('_mobile', $itemtag); ?>/><?php _e('Mobile', 'plf'); ?></label>
-                        <label><input type="radio" name="plf_option[_tag]" value="_pagefilter" <?php checked('_pagefilter',  $itemtag); ?>/><?php _e('Page Filter', 'plf'); ?></label>
-                        <br />
-                        <?php echo $this->plugins_checklist( $this->plugins_inf, $option['plugins'] ); ?>
-                    </td>
-                </tr>
-                <tr>
-                </tr>
-                </tbody>
-            </table>
             <p class="submit">
                 <input type="submit" class="button-primary" name="clear_regist_filter" value="<?php _e('Clear', 'plf'); ?>" />&nbsp;&nbsp;&nbsp;
-                <input type="submit" class="button-primary" name="edit_regist_filter" value="<?php _e('Entry &raquo;', 'plf'); ?>" />
+                <input type="submit" class="button-primary" name="edit_regist_filter" value="<?php _e('Filter Entry &raquo;', 'plf'); ?>" />
             </p>
         </div>
         <div id="plf-activation-tab" >
             <?php
-            $default = array( 'filter' => 'include', 'plugins' => '');
-            $cgroup = (!empty($this->filter['group']))? $this->filter['group'] : array();
             $pgfilter = (!empty($this->filter['_pagefilter']['plugins']))? $this->filter['_pagefilter']['plugins'] : array();
-            $this->plf_table( $cgroup, $default);
-            $itemtag = '';
-            $option = $default;
-            $action = 'new_page_filter';
-            if( !empty($this->editem) ) {
-                $itemtag = $this->editem;
-                $option = $cgroup[$itemtag];
-                $action = 'edit_page_filter';
+            if(!empty($pgfilter)){
+                $this->plfactive_table($this->plugins_inf, $pgfilter, $this->filter);
+                ?>
+                <br />
+                <p><?php _e('Select plugins to be activated for each page type by clicking on <span class="dashicons dashicons-admin-plugins"></span> mark from "page filter" registered plugins.', 'plf') ?><br />
+                   <?php _e('You can also select plugins to activate from Post/Page content editing screen.', 'plf') ?>
+                </p>
+                <p class="submit">
+                  <input type="submit" class="button-primary" name="clear_activate_page_filter" value="<?php _e('Clear', 'plf'); ?>" />&nbsp;&nbsp;&nbsp;
+                  <input type="submit" class="button-primary" name="edit_activate_page_filter" value="<?php _e('Activate Plugin Entry &raquo;', 'plf'); ?>" />
+                </p>
+                <?php
             }
-            $option = wp_parse_args( $option, $default);
+            else {
+                ?>
+                <br />
+                <p><span style="color: #ff0000;"><?php _e('Page Filter is not registered', 'plf') ?></span></p>
+                <?php
+            }
             ?>
-            <br />
-            <p><?php _e('Select the plugin from "Page Filter" registration to activate in each Page type.', 'plf') ?><br />
-               <?php _e('Can be selected plugins to activate from Post content editing screen.', 'plf') ?>
-            </p>
-            <table width="100%" cellspacing="2" cellpadding="5" class="editform form-table">
-                <tbody>
-                <tr>
-                    <th valign="top" scope="row"><label for="plugintag"><?php _e( 'Page type', 'plf'); ?></label></th>
-                    <td><?php
-                        $slist = array('home'       => __('Home/Front-page', 'plf'),
-                                      'archive'     => __('Archive page', 'plf'),
-                                      'search'      => __('Search page', 'plf'),
-                                      'attachment'  => __('Attachment page', 'plf'),
-                                      'page'        => __('Page', 'plf'),
-                                      'post'        => __('Post : Standard', 'plf'),
-                                      'post-aside'  => __('Post : Aside', 'plf'),
-                                      'post-image'  => __('Post : Image', 'plf'),
-                                      'post-video'  => __('Post : Video', 'plf'),
-                                      'post-quote'  => __('Post : Quote', 'plf'),
-                                      'post-link'   => __('Post : Link', 'plf'),
-                                      'post-gallery'=> __('Post : Gallery', 'plf'),
-                                      'post-status' => __('Post : Status', 'plf'),
-                                      'post-audio'  => __('Post : Audio', 'plf'),
-                                      'post-chat'   => __('Post : Chat', 'plf'));
-                        $post_types = get_post_types( array('public' => true, '_builtin' => false) );                    
-                        foreach ( $post_types as $post_type ) {
-                            if(!empty($post_type))
-                                $slist[$post_type] = __('Custom Post : ', 'plf') . $post_type;
-                        }
-                        echo self::dropdown('plf_option[tag]', $slist, $itemtag );
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <th valign="top" scope="row"><label for="plugin"><?php _e('Activate Plugins', 'plf'); ?>:</label></th>
-                    <td>
-                        <?php echo $this->pagefilter_plugins_checklist( $this->plugins_inf, $pgfilter, $option['plugins'] ); ?>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <p class="submit">
-                <input type="submit" class="button-primary" name="clear_page_filter" value="<?php _e('Clear', 'plf'); ?>" />&nbsp;&nbsp;&nbsp;
-                <input type="submit" class="button-primary" name="<?php echo $action ?>" value="<?php _e('Entry &raquo;', 'plf'); ?>" />
-            </p>
         </div>
         </form>
     </div>
