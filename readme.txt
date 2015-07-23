@@ -3,7 +3,7 @@ Contributors: enomoto celtislab
 Tags: plugin, dynamic activate, dynamic deactivate, filter, logic
 Requires at least: 3.9
 Tested up to: 4.2
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -74,3 +74,6 @@ Usage
 
 = 2.1.0 =
 * 2015-04-30  Change user interface option settings screen.
+
+= 2.2.0 =
+* 2015-07-23  Code cleanups (Stop the use of transient API cache of intermediate processing data)

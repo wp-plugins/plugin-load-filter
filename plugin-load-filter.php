@@ -2,7 +2,7 @@
 /*
   Plugin Name: plugin load filter
   Description: Dynamically activate the selected plugins for each page. Response will be faster by filtering plugins.
-  Version: 2.1.0
+  Version: 2.2.0
   Plugin URI: http://celtislab.net/wp_plugin_load_filter
   Author: enomoto@celtislab
   Author URI: http://celtislab.net/
@@ -68,12 +68,12 @@ class Plf_setting {
         load_plugin_textdomain('plf', false, basename( dirname( __FILE__ ) ).'/languages' );
         
         $this->filter = get_option('plf_option');
+        if(!empty($this->filter['updated'])){
+            $this->filter['updated'] = null; //v2.2.0 not used option clear
+        }
+        
         if(is_admin()) {
             add_action( 'plugins_loaded', array(&$this, 'plf_admin_start'), 9999 );
-            add_action( 'update_option_plf_option', array(&$this, 'plf_transient_clear') );
-            add_action( 'update_option_active_plugins', array(&$this, 'plf_transient_clear') );
-            add_action( 'update_option_jetpack_active_modules', array(&$this, 'plf_transient_clear') );
-            add_action( 'update_option_celtispack_active_modules', array(&$this, 'plf_transient_clear') );
             add_action( 'add_meta_boxes', array(&$this, 'load_meta_boxes'), 10, 2 );
             //plf-filter must-use plagin activete check
             if(wp_mkdir_p( WPMU_PLUGIN_DIR )){
@@ -84,8 +84,6 @@ class Plf_setting {
             register_deactivation_hook( __FILE__, 'Plf_setting::deactivation' );
             register_uninstall_hook(__FILE__, 'Plf_setting::uninstall');
         }
-        add_action( 'save_post', array(&$this, 'plf_transient_clear') );
-        add_action( 'deleted_post', array(&$this, 'plf_transient_clear') );
         add_action( 'wp_ajax_plugin_load_filter', array(&$this, 'plf_ajax_postidfilter'));
     }
 
@@ -101,12 +99,6 @@ class Plf_setting {
         delete_option('plf_option' );
     }
     
-    //Disable the transient cache by changing the update time
-    public function plf_transient_clear() {
-        $this->filter['updated'] = strtotime("now");
-        update_option('plf_option', $this->filter );
-    }
-
     //Plugin Load Filter admin setting start 
     public function plf_admin_start() {
         require_once(ABSPATH . 'wp-admin/includes/plugin.php');
@@ -202,7 +194,6 @@ class Plf_setting {
                         $option["plugins"] = implode(",", array_keys($plugins));
                         $this->filter[$item] = $option;
                     }
-                    $this->filter['updated'] = strtotime("now");
                     update_option('plf_option', $this->filter );
                 }
                 header('Location: ' . admin_url('plugins.php?page=plugin_load_filter_admin_manage_page'));
@@ -213,7 +204,6 @@ class Plf_setting {
                 foreach( array('_admin', '_desktop', '_mobile', '_pagefilter') as $item){
                     $this->filter[$item] = '';
                 }
-                $this->filter['updated'] = strtotime("now");
                 update_option('plf_option', $this->filter );
                 header('Location: ' . admin_url('plugins.php?page=plugin_load_filter_admin_manage_page'));
                 exit;
@@ -231,7 +221,6 @@ class Plf_setting {
                         $option["plugins"] = implode(",", $plugins);
                         $this->filter['group'][$item] = $option;
                     }
-                    $this->filter['updated'] = strtotime("now");
                     update_option('plf_option', $this->filter );
                 }
                 header('Location: ' . admin_url('plugins.php?page=plugin_load_filter_admin_manage_page&action=tab_1'));
@@ -243,7 +232,6 @@ class Plf_setting {
                 foreach( $group as $item){
                     $this->filter['group'][$item] = '';
                 }
-                $this->filter['updated'] = strtotime("now");
                 update_option('plf_option', $this->filter );
                 header('Location: ' . admin_url('plugins.php?page=plugin_load_filter_admin_manage_page&action=tab_1'));
                 exit;
@@ -642,8 +630,6 @@ class Plf_setting {
                 }
                 update_post_meta( $pid, '_plugin_load_filter', $option );
             }
-            //transient cache clear
-            $this->plf_transient_clear();
             
             $pgfilter = (!empty($this->filter['_pagefilter']['plugins']))? $this->filter['_pagefilter']['plugins'] : array();
             $html = $this->pagefilter_plugins_checklist( $this->plugins_inf, $pgfilter, $option['plugins'] );

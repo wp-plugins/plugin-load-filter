@@ -2,7 +2,7 @@
 /*
   Plugin Name: plugin load filter [plf-filter]
   Description: Dynamically activated only plugins that you have selected in each page. [Note] plf-filter has been automatically installed / deleted by Activate / Deactivate of "load filter plugin".
-  Version: 2.1.0
+  Version: 2.2.0
   Plugin URI: http://celtislab.net/wp_plugin_load_filter
   Author: enomoto@celtislab
   Author URI: http://celtislab.net/
@@ -87,9 +87,11 @@ $plugin_load_filter = new Plf_filter();
 class Plf_filter {
     
     private $filter = array();  //Plugin Load Filter Setting option data
+    private $cache;
 
     function __construct() {    
         $this->filter = get_option('plf_option');
+        $this->cache  = null;
         if(!empty($this->filter)){
             add_filter('pre_option_active_plugins', array(&$this, 'active_plugins'));
             add_filter('pre_option_jetpack_active_modules', array(&$this, 'active_jetmodules'));
@@ -233,15 +235,10 @@ class Plf_filter {
         }
 
         $filter = $this->filter;
-        //get_option is called many times, home page and singular page to cache
+        //get_option is called many times, intermediate processing data to cache
         $keyid = md5('plf_'. (string)wp_is_mobile(). $_SERVER['REQUEST_URI']);
-        $cache = get_transient( $keyid );
-        if ( !is_array($cache) ){
-            $cache = array();
-        }
-        elseif ( !empty( $cache[$option]['active']) ){
-            if(!empty($filter['updated']) && $filter['updated'] <= $cache[$option]['time'] )
-                return apply_filters( 'option_' . $option, $cache[$option]['active'] );
+        if(!empty($this->cache[$keyid][$option])){
+            return apply_filters( 'option_' . $option, $this->cache[$keyid][$option]);
         }
 
         //Before plugins loaded, it does not use conditional branch such as is_home, to set wp_query, wp in temporary query
@@ -358,12 +355,7 @@ class Plf_filter {
                 $new_value[] = $item;
             }
         }
-        //singular page to filter value cache
-        if(is_singular()){
-            $cache[$option]['active'] = $new_value;
-            $cache[$option]['time'] = strtotime("now");
-            set_transient( $keyid, $cache, DAY_IN_SECONDS );
-        }
+        $this->cache[$keyid][$option] = $new_value;
         return apply_filters( 'option_' . $option, $new_value );
     }
 }
